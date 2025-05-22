@@ -13,6 +13,5 @@
     }
   ],
   "buildCommand": "npm install",
-  "outputDirectory": ".",
-  "framework": "node"
+  "outputDirectory": "."
 } 
