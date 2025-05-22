@@ -68,10 +68,9 @@ app.use(async (req, res, next) => {
     }
 });
 
-const PORT = process.env.PORT || 4000;
-
-// For local development
+// Only start the server if we're not in a serverless environment
 if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 4000;
     app.listen(PORT, () => {
         logger.info(`Server is running on http://localhost:${PORT}`);
     });
