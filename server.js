@@ -16,9 +16,6 @@ dotenv.config();
 
 const app = express();
 
-// Connect to MongoDB
-connectDB();
-
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -39,32 +36,29 @@ app.use('/api/informal', informalRouteRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
     logger.error(err.stack);
-    res.status(500).json({ error: 'Something went wrong!' });
+    res.status(500).json({ 
+        error: 'Something went wrong!',
+        message: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
+});
+
+// Initialize database connection
+connectDB().catch(err => {
+    logger.error('Failed to connect to MongoDB:', err);
+    // Don't exit process in serverless environment
+    if (process.env.NODE_ENV !== 'production') {
+        process.exit(1);
+    }
 });
 
 const PORT = process.env.PORT || 4000;
 
-// Add more detailed startup logging and error handling
-const server = app.listen(PORT, '0.0.0.0', (error) => {
-    if (error) {
-        logger.error(`Error starting server: ${error.message}`);
-        process.exit(1);
-    }
-    logger.info(`Server is running on http://localhost:${PORT}`);
-    logger.info(`API endpoints available at:`);
-    logger.info(`- http://localhost:${PORT}/api/routes`);
-    logger.info(`- http://localhost:${PORT}/api/stops`);
-    logger.info(`- http://localhost:${PORT}/api/fares`);
-    logger.info(`- http://localhost:${PORT}/api/auth`);
-    logger.info(`- http://localhost:${PORT}/api/informal`);
-});
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        logger.info(`Server is running on http://localhost:${PORT}`);
+    });
+}
 
-// Handle server errors
-server.on('error', (error) => {
-    if (error.code === 'EADDRINUSE') {
-        logger.error(`Port ${PORT} is already in use. Please try a different port.`);
-    } else {
-        logger.error(`Server error: ${error.message}`);
-    }
-    process.exit(1);
-});
+// Export for serverless
+export default app;
