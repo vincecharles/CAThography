@@ -9,7 +9,7 @@ import FareCalculator from './components/FareCalculator';
 import { useState, useEffect } from 'react'
 import './App.css'
 
-function App() {
+function AppContent() {
   const [routes, setRoutes] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -82,55 +82,61 @@ function App() {
   }
 
   return (
-    <Router>
-      <MapProvider>
-        <div className="min-h-screen bg-gray-100">
-          <Navbar />
-          <main className="container mx-auto px-4 py-8">
-            <Routes>
-              <Route path="/" element={
+    <div className="min-h-screen bg-gray-100">
+      <Navbar />
+      <main className="container mx-auto px-4 py-8">
+        <Routes>
+          <Route path="/" element={
+            <div className="space-y-8">
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <h1 className="text-3xl font-bold text-gray-800 mb-4">Welcome to CAThography</h1>
+                <p className="text-gray-600">Your guide to navigating Philippine public transportation</p>
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2">
+                  <Map />
+                </div>
                 <div className="space-y-8">
-                  <div className="bg-white rounded-lg shadow-lg p-6">
-                    <h1 className="text-3xl font-bold text-gray-800 mb-4">Welcome to CAThography</h1>
-                    <p className="text-gray-600">Your guide to navigating Philippine public transportation</p>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2">
-                      <Map />
-                    </div>
-                    <div className="space-y-8">
-                      <RouteList />
-                      <StopList />
-                      <FareCalculator />
-                    </div>
-                  </div>
-                </div>
-              } />
-            </Routes>
-          </main>
-          
-          <footer className="bg-white border-t mt-8">
-            <div className="container mx-auto px-4 py-6">
-              <div className="flex flex-col md:flex-row justify-between items-center">
-                <div className="mb-4 md:mb-0">
-                  <p className="text-gray-600">&copy; 2024 CAThography. All rights reserved.</p>
-                </div>
-                <div className="flex space-x-6">
-                  <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors duration-200">
-                    About
-                  </a>
-                  <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors duration-200">
-                    Privacy
-                  </a>
-                  <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors duration-200">
-                    Terms
-                  </a>
+                  <RouteList />
+                  <StopList />
+                  <FareCalculator />
                 </div>
               </div>
             </div>
-          </footer>
+          } />
+        </Routes>
+      </main>
+      
+      <footer className="bg-white border-t mt-8">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="mb-4 md:mb-0">
+              <p className="text-gray-600">&copy; 2024 CAThography. All rights reserved.</p>
+            </div>
+            <div className="flex space-x-6">
+              <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors duration-200">
+                About
+              </a>
+              <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors duration-200">
+                Privacy
+              </a>
+              <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors duration-200">
+                Terms
+              </a>
+            </div>
+          </div>
         </div>
+      </footer>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <MapProvider>
+        <AppContent />
         <SpeedInsights />
       </MapProvider>
     </Router>
