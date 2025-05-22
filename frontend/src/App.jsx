@@ -31,8 +31,55 @@ function App() {
     }
   }
 
-  if (loading) return <div>Loading...</div>
-  if (error) return <div>{error}</div>
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8">
+          <div className="animate-pulse space-y-8">
+            <div className="h-[600px] bg-gray-200 rounded-lg"></div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 space-y-4">
+                <div className="h-48 bg-gray-200 rounded-lg"></div>
+                <div className="h-48 bg-gray-200 rounded-lg"></div>
+              </div>
+              <div className="space-y-4">
+                <div className="h-48 bg-gray-200 rounded-lg"></div>
+                <div className="h-48 bg-gray-200 rounded-lg"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-100">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8">
+          <div className="bg-white rounded-lg shadow-lg p-6 text-center">
+            <svg
+              className="w-16 h-16 text-red-500 mx-auto mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">{error}</h2>
+            <p className="text-gray-600">Please try again later</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Router>
@@ -42,19 +89,47 @@ function App() {
           <main className="container mx-auto px-4 py-8">
             <Routes>
               <Route path="/" element={
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                  <div className="lg:col-span-2">
-                    <Map />
+                <div className="space-y-8">
+                  <div className="bg-white rounded-lg shadow-lg p-6">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-4">Welcome to CAThography</h1>
+                    <p className="text-gray-600">Your guide to navigating Philippine public transportation</p>
                   </div>
-                  <div className="space-y-8">
-                    <RouteList />
-                    <StopList />
-                    <FareCalculator />
+                  
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2">
+                      <Map />
+                    </div>
+                    <div className="space-y-8">
+                      <RouteList />
+                      <StopList />
+                      <FareCalculator />
+                    </div>
                   </div>
                 </div>
               } />
             </Routes>
           </main>
+          
+          <footer className="bg-white border-t mt-8">
+            <div className="container mx-auto px-4 py-6">
+              <div className="flex flex-col md:flex-row justify-between items-center">
+                <div className="mb-4 md:mb-0">
+                  <p className="text-gray-600">&copy; 2024 CAThography. All rights reserved.</p>
+                </div>
+                <div className="flex space-x-6">
+                  <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors duration-200">
+                    About
+                  </a>
+                  <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors duration-200">
+                    Privacy
+                  </a>
+                  <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors duration-200">
+                    Terms
+                  </a>
+                </div>
+              </div>
+            </div>
+          </footer>
         </div>
         <SpeedInsights />
       </MapProvider>
