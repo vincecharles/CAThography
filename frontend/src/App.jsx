@@ -5,8 +5,33 @@ import Map from './components/Map';
 import RouteList from './components/RouteList';
 import StopList from './components/StopList';
 import FareCalculator from './components/FareCalculator';
+import { useState, useEffect } from 'react'
+import './App.css'
 
 function App() {
+  const [routes, setRoutes] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    fetchRoutes()
+  }, [])
+
+  const fetchRoutes = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/api/routes')
+      const data = await response.json()
+      setRoutes(data)
+      setLoading(false)
+    } catch (err) {
+      setError('Failed to fetch routes')
+      setLoading(false)
+    }
+  }
+
+  if (loading) return <div>Loading...</div>
+  if (error) return <div>{error}</div>
+
   return (
     <Router>
       <MapProvider>

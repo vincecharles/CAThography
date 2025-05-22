@@ -1,95 +1,107 @@
 import fs from 'fs';
+import path from 'path';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import { stringify } from 'csv-stringify/sync';
+import connectDB from '../src/config/database.js';
+import Route from '../src/models/Route.js';
+import Stop from '../src/models/Stop.js';
+import Fare from '../src/models/Fare.js';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
 
-const generateSampleGTFS = () => {
-    const dataPath = join(__dirname, '../data/gtfs');
-    
-    // Create data directory if it doesn't exist
-    if (!fs.existsSync(dataPath)) {
-        fs.mkdirSync(dataPath, { recursive: true });
-    }
-
-    // Generate routes.txt
-    const routes = [
-        {
-            route_id: 'LRT1-1',
-            agency_id: 'LRT1',
-            route_short_name: 'LRT1',
-            route_long_name: 'Baclaran - Roosevelt',
-            route_type: '1',
-            route_color: 'FF0000',
-            route_text_color: 'FFFFFF'
-        }
-    ];
-
-    // Generate stops.txt
-    const stops = [
-        {
-            stop_id: 'LRT1-BAC',
-            stop_code: 'BAC',
-            stop_name: 'Baclaran',
-            stop_desc: 'Baclaran Station',
-            stop_lat: '14.5347',
-            stop_lon: '120.9972',
-            wheelchair_boarding: '1'
-        },
-        {
-            stop_id: 'LRT1-EDSA',
-            stop_code: 'EDSA',
-            stop_name: 'EDSA',
-            stop_desc: 'EDSA Station',
-            stop_lat: '14.5378',
-            stop_lon: '120.9917',
-            wheelchair_boarding: '1'
-        }
-    ];
-
-    // Generate fare_attributes.txt
-    const fareAttributes = [
-        {
-            fare_id: 'LRT1-REGULAR',
-            price: '15.00',
-            currency_type: 'PHP',
-            payment_method: '0',
-            transfers: '0'
-        },
-        {
-            fare_id: 'LRT1-STUDENT',
-            price: '12.00',
-            currency_type: 'PHP',
-            payment_method: '0',
-            transfers: '0'
-        }
-    ];
-
-    // Generate fare_rules.txt
-    const fareRules = [
-        {
-            fare_id: 'LRT1-REGULAR',
-            route_id: 'LRT1-1',
-            origin_id: 'LRT1-BAC',
-            destination_id: 'LRT1-EDSA'
-        },
-        {
-            fare_id: 'LRT1-STUDENT',
-            route_id: 'LRT1-1',
-            origin_id: 'LRT1-BAC',
-            destination_id: 'LRT1-EDSA'
-        }
-    ];
-
-    // Write files
-    fs.writeFileSync(join(dataPath, 'routes.txt'), stringify(routes, { header: true }));
-    fs.writeFileSync(join(dataPath, 'stops.txt'), stringify(stops, { header: true }));
-    fs.writeFileSync(join(dataPath, 'fare_attributes.txt'), stringify(fareAttributes, { header: true }));
-    fs.writeFileSync(join(dataPath, 'fare_rules.txt'), stringify(fareRules, { header: true }));
-
-    console.log('Sample GTFS data generated successfully');
+const connectToDatabase = async () => {
+  try {
+    await connectDB();
+    console.log('Connected to MongoDB');
+  } catch (error) {
+    console.error('Error connecting to MongoDB:', error);
+    process.exit(1);
+  }
 };
 
-generateSampleGTFS(); 
+const generateSampleData = async () => {
+  try {
+    // Clear existing data
+    await Route.deleteMany({});
+    await Stop.deleteMany({});
+    await Fare.deleteMany({});
+
+    // Create sample routes
+    const routes = [
+      {
+        routeId: 'LRT1-001',
+        name: 'LRT Line 1',
+        description: 'Baclaran to Roosevelt',
+        type: 'RAIL',
+        operator: 'LRTA',
+        region: 'NCR',
+        city: 'Manila',
+        stops: []
+      },
+      {
+        routeId: 'BUS-001',
+        name: 'EDSA Carousel',
+        description: 'Monumento to PITX',
+        type: 'BUS',
+        operator: 'MMDA',
+        region: 'NCR',
+        city: 'Manila',
+        stops: []
+      }
+    ];
+
+    // Create sample stops
+    const stops = [
+      {
+        stopId: 'LRT1-001',
+        name: 'Baclaran Station',
+        location: {
+          type: 'Point',
+          coordinates: [120.9825, 14.5347]
+        },
+        landmark: 'Baclaran Church',
+        isTerminal: true
+      },
+      {
+        stopId: 'LRT1-002',
+        name: 'EDSA Station',
+        location: {
+          type: 'Point',
+          coordinates: [120.9833, 14.5350]
+        },
+        landmark: 'EDSA',
+        isTerminal: false
+      }
+    ];
+
+    // Create sample fares
+    const fares = [
+      {
+        fareId: 'FARE-001',
+        routeId: 'LRT1-001',
+        amount: 20,
+        currency: 'PHP',
+        type: 'REGULAR'
+      },
+      {
+        fareId: 'FARE-002',
+        routeId: 'BUS-001',
+        amount: 15,
+        currency: 'PHP',
+        type: 'REGULAR'
+      }
+    ];
+
+    // Save to database
+    await Route.insertMany(routes);
+    await Stop.insertMany(stops);
+    await Fare.insertMany(fares);
+
+    console.log('Sample data generated successfully');
+  } catch (error) {
+    console.error('Error generating sample data:', error);
+  }
+};
+
+// Run the script
+connectToDatabase().then(generateSampleData); 
