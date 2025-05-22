@@ -39,16 +39,20 @@ function App() {
         <div className="min-h-screen bg-gray-100">
           <Navbar />
           <main className="container mx-auto px-4 py-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2">
-                <Map />
-              </div>
-              <div className="space-y-8">
-                <RouteList />
-                <StopList />
-                <FareCalculator />
-              </div>
-            </div>
+            <Routes>
+              <Route path="/" element={
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-2">
+                    <Map />
+                  </div>
+                  <div className="space-y-8">
+                    <RouteList />
+                    <StopList />
+                    <FareCalculator />
+                  </div>
+                </div>
+              } />
+            </Routes>
           </main>
         </div>
         <SpeedInsights />
