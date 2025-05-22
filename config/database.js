@@ -10,23 +10,41 @@ const connectDB = async () => {
             throw new Error('MONGODB_URI is not defined in environment variables');
         }
 
+        // If we're already connected, return the existing connection
+        if (mongoose.connection.readyState === 1) {
+            return mongoose.connection;
+        }
+
         const conn = await mongoose.connect(process.env.MONGODB_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
-            socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+            serverSelectionTimeoutMS: 5000,
+            socketTimeoutMS: 45000,
+            connectTimeoutMS: 10000,
+            maxPoolSize: 10,
+            minPoolSize: 1,
+            maxIdleTimeMS: 30000,
         });
         
         logger.info(`MongoDB Connected: ${conn.connection.host}`);
         return conn;
     } catch (error) {
         logger.error(`MongoDB connection error: ${error.message}`);
-        // Don't exit process in production (serverless) environment
-        if (process.env.NODE_ENV !== 'production') {
-            process.exit(1);
-        }
-        throw error; // Re-throw the error to be handled by the caller
+        throw error;
     }
 };
+
+// Handle connection events
+mongoose.connection.on('error', (err) => {
+    logger.error(`MongoDB connection error: ${err}`);
+});
+
+mongoose.connection.on('disconnected', () => {
+    logger.warn('MongoDB disconnected');
+});
+
+mongoose.connection.on('reconnected', () => {
+    logger.info('MongoDB reconnected');
+});
 
 export default connectDB; 

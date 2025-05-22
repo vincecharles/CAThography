@@ -42,12 +42,29 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Initialize database connection
-connectDB().catch(err => {
-    logger.error('Failed to connect to MongoDB:', err);
-    // Don't exit process in serverless environment
-    if (process.env.NODE_ENV !== 'production') {
-        process.exit(1);
+// Initialize database connection only when needed
+let isConnected = false;
+
+const connectToDatabase = async () => {
+    if (isConnected) {
+        return;
+    }
+    try {
+        await connectDB();
+        isConnected = true;
+    } catch (error) {
+        logger.error('Database connection error:', error);
+        throw error;
+    }
+};
+
+// Middleware to ensure database connection
+app.use(async (req, res, next) => {
+    try {
+        await connectToDatabase();
+        next();
+    } catch (error) {
+        next(error);
     }
 });
 
