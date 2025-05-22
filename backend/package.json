@@ -1,0 +1,44 @@
+{
+  "name": "cathography-backend",
+  "version": "1.0.0",
+  "description": "Backend for CAThography - Philippine Transit Mapping Application",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "build": "npm run clean && npm run lint && npm run test",
+    "clean": "rimraf dist",
+    "lint": "eslint src/**/*.js",
+    "test": "jest",
+    "import-gtfs": "node scripts/importGTFS.js",
+    "import-informal": "node scripts/importInformalRoutes.js",
+    "import-uv-express": "node scripts/importUVExpress.js",
+    "generate-sample": "node scripts/generateSampleGTFS.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "csv-parse": "^5.5.3",
+    "csv-stringify": "^6.4.5",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.1.1",
+    "morgan": "^1.10.0",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
+    "babel-jest": "^29.7.0",
+    "eslint": "^8.56.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.3",
+    "rimraf": "^5.0.5",
+    "supertest": "^6.3.4"
+  }
+} 
