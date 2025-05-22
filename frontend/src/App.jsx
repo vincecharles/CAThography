@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { MapProvider } from './contexts/MapContext';
-import { SpeedInsights } from "@vercel/speed-insights/react";
+import { SpeedInsights } from '@vercel/speed-insights';
 import Navbar from './components/Navbar';
 import Map from './components/Map';
 import RouteList from './components/RouteList';
