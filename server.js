@@ -26,6 +26,11 @@ app.get('/', (req, res) => {
     res.json({ message: 'Welcome to CAThography API' });
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Routes
 app.use('/api/routes', routeRoutes);
 app.use('/api/stops', stopRoutes);
@@ -35,10 +40,10 @@ app.use('/api/informal', informalRouteRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    logger.error(err.stack);
-    res.status(500).json({ 
+    logger.error('Error:', err);
+    res.status(err.status || 500).json({ 
         error: 'Something went wrong!',
-        message: process.env.NODE_ENV === 'development' ? err.message : undefined
+        message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
     });
 });
 
@@ -50,11 +55,15 @@ const connectToDatabase = async () => {
         return;
     }
     try {
-        await connectDB();
-        isConnected = true;
+        const conn = await connectDB();
+        if (conn) {
+            isConnected = true;
+        } else {
+            logger.warn('Database connection failed, but continuing without it');
+        }
     } catch (error) {
         logger.error('Database connection error:', error);
-        throw error;
+        // Don't throw the error, just log it
     }
 };
 
@@ -64,7 +73,8 @@ app.use(async (req, res, next) => {
         await connectToDatabase();
         next();
     } catch (error) {
-        next(error);
+        logger.error('Database middleware error:', error);
+        next();
     }
 });
 

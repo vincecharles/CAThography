@@ -21,16 +21,20 @@ const connectDB = async () => {
             serverSelectionTimeoutMS: 5000,
             socketTimeoutMS: 45000,
             connectTimeoutMS: 10000,
-            maxPoolSize: 10,
-            minPoolSize: 1,
-            maxIdleTimeMS: 30000,
+            maxPoolSize: 5,
+            minPoolSize: 0,
+            maxIdleTimeMS: 10000,
+            retryWrites: true,
+            retryReads: true,
+            w: 'majority',
+            wtimeoutMS: 2500,
         });
         
         logger.info(`MongoDB Connected: ${conn.connection.host}`);
         return conn;
     } catch (error) {
         logger.error(`MongoDB connection error: ${error.message}`);
-        throw error;
+        return null;
     }
 };
 
