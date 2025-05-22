@@ -11,6 +11,6 @@ export default defineConfig({
     sourcemap: true,
   },
   optimizeDeps: {
-    include: ['@vercel/speed-insights']
+    include: ['@vercel/speed-insights/react']
   }
 }); 
