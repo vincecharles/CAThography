@@ -20,7 +20,8 @@ function App() {
 
   const fetchRoutes = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/routes')
+      const apiUrl = import.meta.env.VITE_API_URL || '/api';
+      const response = await fetch(`${apiUrl}/routes`)
       const data = await response.json()
       setRoutes(data)
       setLoading(false)

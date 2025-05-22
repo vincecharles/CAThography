@@ -9,7 +9,8 @@ function RouteList() {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/routes`);
+        const apiUrl = import.meta.env.VITE_API_URL || '/api';
+        const response = await axios.get(`${apiUrl}/routes`);
         setRoutes(response.data);
         setLoading(false);
       } catch (err) {
